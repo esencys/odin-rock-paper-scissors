@@ -1,29 +1,79 @@
-const game = () => {
-  console.log("Game of rock paper scissors begin!");
-
-  const MAX_ROUNDS = 5;
-  let outcome = "invalid"
-  let userScore = 0;
-  
-  for (let i = 1; i <= MAX_ROUNDS; i++) {
-    let result = "";
-    let computerSelection = computerPlay().toLowerCase();
-
-    while (outcome == "invalid") {
-      playerSelection = prompt(`Round ${i}: Please enter your selection`).toLowerCase();
-      outcome = calcOutcome(playerSelection, computerSelection);
-    }
-
-    userScore += updateScore(outcome);   
-    result += updateResult(outcome, playerSelection, computerSelection);
-    console.log(result);
+const playGame = (e) => {
+  e.stopPropagation();
+ 
+  if (isGameOver()) {
+    announceResult();
+    return;
   }
 
-  console.log(`You won ${userScore} out of ${MAX_ROUNDS} rounds!`)
+  let playerSelection = e.target.innerText.toLowerCase();
+  let computerSelection = computerPlay();
+
+  let outcome = calcOutcome(playerSelection, computerSelection);
+ 
+  updateScores(outcome);
+  renderOutcome(outcome, playerSelection, computerSelection);
+}
+
+const renderOutcome = (outcome, playerSelection, computerSelection) => {
+  const result_div = document.getElementById("result")
+  result = updateResult(outcome, playerSelection, computerSelection);
+  
+  result_div.textContent = `${result}`;
+}
+
+const announceResult = () => {
+  const playerScore = document.getElementById("player");
+  const computerScore = document.getElementById("computer");
+  const announcement = document.getElementById("announcement");
+
+  let output = "";
+
+  if (parseInt(playerScore.textContent) === 5) {
+    output += "Player Won!";
+  }
+  else if (parseInt(computerScore.textContent) === 5) {
+    output += "Computer Won!";
+  }
+  else {
+    output += "Error occured with scores";
+  }
+  
+  announcement.textContent = output;
+}
+
+const isGameOver = () => {
+  let gameOver = false;
+  const playerScore = document.getElementById("player").textContent;
+  const computerScore = document.getElementById("computer").textContent;
+
+  if (parseInt(playerScore) === 5 || parseInt(computerScore) === 5) {
+    gameOver = true;
+  }
+
+  return gameOver;
+}
+
+const updateScores = (outcome) => {
+  const playerScore = document.getElementById("player");
+  const computerScore = document.getElementById("computer");
+
+  switch (outcome) {
+    case "win":
+      playerScore.textContent = `${parseInt(playerScore.textContent) + 1}`
+      break;
+
+    case "lose":
+      computerScore.textContent = `${parseInt(computerScore.textContent) + 1}`
+      break;
+
+    default:
+      break;
+  } 
 }
 
 const computerPlay = () => {
-  const CHOICES = ["rock", "paper", "scissors"];
+  const CHOICES = ["rock", "paper", "scissor"];
 
   return CHOICES[Math.floor(Math.random()*3)];
 }
@@ -38,7 +88,7 @@ const calcOutcome = (playerSelection, computerSelection) => {
         index = 1
       else if (computerSelection === "paper")
         index = 3
-      else if (computerSelection === "scissors")
+      else if (computerSelection === "scissor")
         index = 2
       break;
     case "paper":
@@ -46,15 +96,15 @@ const calcOutcome = (playerSelection, computerSelection) => {
         index = 2
       else if (computerSelection === "paper")
         index = 1
-      else if (computerSelection === "scissors")
+      else if (computerSelection === "scissor")
         index = 3
       break;
-    case "scissors":
+    case "scissor":
       if (computerSelection === "rock")
         index = 3
       else if (computerSelection === "paper")
         index = 2
-      else if (computerSelection === "scissors")
+      else if (computerSelection === "scissor")
         index = 1
       break;
     default:
@@ -84,14 +134,45 @@ const updateResult = (outcome, playerSelection, computerSelection) => {
   return result;
 }
 
-const updateScore = (outcome) => {
-  let score = 0;
+const game = () => {
+  const main = document.getElementById("app");
 
-  if (outcome === "win") {
-    score = 1;
-  }
+  const announcement = document.createElement("div");
+  announcement.id = "announcement";
 
-  return score;
+  const playerScore = document.createElement("div");
+  playerScore.id = "player";
+  playerScore.textContent = "0";
+
+  const computerScore = document.createElement("div");
+  computerScore.id = "computer";
+  computerScore.textContent = "0";
+
+  const score = document.createElement("div");
+  score.id = "score";
+  score.appendChild(playerScore);
+  score.appendChild(computerScore);
+
+  const result_div = document.createElement("div");
+  result_div.id = "result"
+
+  const rockBtn = document.createElement("button");
+  rockBtn.innerText = "Rock";
+
+  const scissorBtn = document.createElement("button");
+  scissorBtn.innerText = "Scissor";
+
+  const paperBtn = document.createElement("button");
+  paperBtn.innerText = "Paper";
+
+  main.addEventListener('click', (e) => playGame(e));
+
+  main.appendChild(rockBtn);
+  main.appendChild(scissorBtn);
+  main.appendChild(paperBtn);
+  main.appendChild(result_div);
+  main.appendChild(score);
+  main.appendChild(announcement);
 }
 
 game();
