@@ -13,3 +13,5 @@ Learnt:
 - use DOM events
 - implement event based game control
 - refactor old code
+- git branch to work on feature to add
+- git merge to merge branch with main
