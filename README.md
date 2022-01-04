@@ -9,3 +9,7 @@ Learnt:
 - switch case for matching options
 - make player selection case-insensitive
 - repeat round until valid option is entered
+- use javascript to manipulate DOM
+- use DOM events
+- implement event based game control
+- refactor old code
